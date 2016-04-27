@@ -23,7 +23,7 @@ def insertDicts(table, arr, cursor):
   stmt = "INSERT INTO %s (%s) VALUES %s;" % (table, cols, ','.join(repsarr))
   cursor.execute(stmt, valstup)
 
-def loadFile(fname, table, cursor, ignore):
+def loadFile(fname, table, cursor, ignorekey, ignoreval):
   print 'loading: ' + fname
   with open(fname) as f:
     csvread = csv.reader(f)
@@ -33,9 +33,9 @@ def loadFile(fname, table, cursor, ignore):
       if len(headers) is 0:
         headers = [ x.lower() for x in row ]
       else:
-        if 'unknown' in row:
+        if ignoreval in row:
           continue
-        rows.append(rm(dict(zip(headers, row)), ignore))
+        rows.append(rm(dict(zip(headers, row)), ignorekey))
         if len(rows) >= 500:
           insertDicts(table, rows, cursor)
           rows = []
@@ -50,10 +50,10 @@ try:
   cur.execute('''CREATE TABLE weather ( station text, station_name text, elevation real, latitude numeric, longitude numeric, date date, mdpr numeric, mdsf numeric, dapr numeric, prcp numeric, snwd numeric, snow numeric, tmax numeric, tmin numeric, tobs numeric, awnd numeric);''')
   cur.execute('''DROP TABLE IF EXISTS dond;''')
   cur.execute('''CREATE TABLE dond ( id text, broadcast_date date, name text, education char, gender char, age int, stop_round int, amount_won int, round int, deal_or_no_deal text, "bank-offer" int, "0.01" boolean, "1" boolean, "5" boolean, "10" boolean, "25" boolean, "50" boolean, "75" boolean, "100" boolean, "200" boolean, "300" boolean, "400" boolean, "500" boolean, "750" boolean, "1,000" boolean, "5,000" boolean, "10,000" boolean, "25,000" boolean, "50,000" boolean, "75,000" boolean, "100,000" boolean, "200,000" boolean, "300,000" boolean, "400,000" boolean, "500,000" boolean, "750,000" boolean, "1,000,000" boolean, "1,500,000" boolean );''')
-  loadFile('DOND1.csv', 'dond', cur, [])
-  loadFile('DOND2.csv', 'dond', cur, [])
-  loadFile('726160.csv', 'weather', cur, ['dasf'])
-  loadFile('726162.csv', 'weather', cur, ['dasf'])
+  loadFile('DOND1.csv', 'dond', cur, [], "")
+  loadFile('DOND2.csv', 'dond', cur, [], "")
+  loadFile('726160.csv', 'weather', cur, ['dasf'], "unknown")
+  loadFile('726162.csv', 'weather', cur, ['dasf'], "unknown")
   cur.execute('''COMMIT;''')
   conn.close()
 except pg8000.Error as e:
