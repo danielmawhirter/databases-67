@@ -1,3 +1,4 @@
 DROP TABLE IF EXISTS weather;
 CREATE TABLE weather ( station text, station_name text, elevation real, latitude numeric, longitude numeric, date date, mdpr numeric, mdsf numeric, dapr numeric, prcp numeric, snwd numeric, snow numeric, tmax numeric, tmin numeric, tobs numeric, awnd numeric);
-
+DROP TABLE IF EXISTS dond;
+CREATE TABLE dond ( id text, broadcast_date date, name text, education char, gender char, age int, stop_round int, amount_won int, round int, deal_or_no_deal text, "bank-offer" int, "0.01" boolean, "1" boolean, "5" boolean, "10" boolean, "25" boolean, "50" boolean, "75" boolean, "100" boolean, "200" boolean, "300" boolean, "400" boolean, "500" boolean, "750" boolean, "1,000" boolean, "5,000" boolean, "10,000" boolean, "25,000" boolean, "50,000" boolean, "75,000" boolean, "100,000" boolean, "200,000" boolean, "300,000" boolean, "400,000" boolean, "500,000" boolean, "750,000" boolean, "1,000,000" boolean, "1,500,000" boolean );
