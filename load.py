@@ -4,25 +4,40 @@ import getpass
 import pg8000
 import csv
 
-def insertDict(d, cursor):
-  if 'dasf' in d:
-    del d['dasf']
-  cols = ','.join(d.keys())
-  reps = ','.join([ '(%s)' for x in d.keys() ])
-  vals = tuple(d.values())
-  stmt = "INSERT INTO weather (%s) VALUES (%s);" % (cols, reps)
-  cursor.execute(stmt, vals)
+def insertDicts(arr, cursor):
+  if len(arr) is 0:
+    return
+  if 'dasf' in arr[0]:
+    del arr[0]['dasf']
+  cols = ','.join(arr[0].keys())
+  reps = '(' + ','.join([ '(%s)' for x in arr[0].keys() ]) + ')'
+  repsarr = []
+  valstup = ()
+  for d in arr:
+    if 'dasf' in d:
+      del d['dasf']
+    repsarr.append(reps)
+    valstup += tuple(d.values())
+  stmt = "INSERT INTO weather (%s) VALUES %s;" % (cols, ','.join(repsarr))
+  cursor.execute(stmt, valstup)
 
 def loadFile(fname, cursor):
   print 'loading: ' + fname
   with open(fname) as f:
     csvread = csv.reader(f)
     headers = []
+    rows = []
     for row in csvread:
       if len(headers) is 0:
         headers = [ x.lower() for x in row ]
       else:
-        insertDict(dict(zip(headers, row)), cursor)
+        if 'unknown' in row:
+          continue
+        rows.append(dict(zip(headers, row)))
+        if len(rows) >= 500:
+          insertDicts(rows, cursor)
+          rows = []
+    insertDicts(rows, cursor)
   print 'done'
 
 try:
